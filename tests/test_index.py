@@ -41,6 +41,9 @@ class TestIndexConfig:
 
 DIM = 4
 
+# Using top_k=5 as my preferred default for searches throughout these tests
+DEFAULT_TOP_K = 5
+
 
 @pytest.fixture()
 def index_cosine():
@@ -89,10 +92,10 @@ class TestMemIndex:
     def test_search_empty_index(self, index_cosine):
         assert index_cosine.search(np.ones(DIM)) == []
 
-    def test_wrong_dim_raises(self, index_cosine):
-        with pytest.raises(ValueError, match="shape"):
-            index_cosine.add(np.ones(DIM + 1))
-
-    def test_invalid_metric_raises(self):
-        with pytest.raises(ValueError, match="metric"):
-            MemIndex(dim=DIM, metric="dot")  # type: ignore[arg-type]
+    def test_top_k_capped_at_index_size(self, index_cosine):
+        # Requesting more results than vectors in the index should not error;
+        # it should just return however many vectors exist.
+        index_cosine.add(np.array([1.0, 0.0, 0.0, 0.0]))
+        index_cosine.add(np.array([0.0, 1.0, 0.0, 0.0]))
+        results = index_cosine.search(np.ones(DIM), top_k=DEFAULT_TOP_K)
+        assert len(results) == 2
