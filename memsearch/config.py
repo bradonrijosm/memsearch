@@ -15,7 +15,7 @@ class IndexConfig:
 
     dim: int
     metric: MetricType = "cosine"
-    top_k_default: int = 5
+    top_k_default: int = 10  # bumped from 5 -- 10 feels more useful in practice
 
     def __post_init__(self) -> None:
         if self.dim <= 0:
@@ -31,7 +31,7 @@ class IndexConfig:
         return cls(
             dim=data["dim"],
             metric=data.get("metric", "cosine"),
-            top_k_default=data.get("top_k_default", 5),
+            top_k_default=data.get("top_k_default", 10),
         )
 
     def to_dict(self) -> dict:
