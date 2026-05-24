@@ -22,6 +22,8 @@ class MemIndex:
         - ``cosine``: cosine similarity (higher is more similar)
         - ``l2``: Euclidean distance (lower is more similar, negated internally)
         - ``dot``: raw dot product similarity (higher is more similar)
+
+    Note: ``top_k`` defaults to 10 in this fork (upstream default is 5).
     """
 
     METRICS = ("cosine", "l2", "dot")
@@ -43,8 +45,11 @@ class MemIndex:
         self._metadata.append(metadata)
         return idx
 
-    def search(self, query: np.ndarray, top_k: int = 5) -> List[SearchResult]:
-        """Return the top_k most similar vectors to the query."""
+    def search(self, query: np.ndarray, top_k: int = 10) -> List[SearchResult]:
+        """Return the top_k most similar vectors to the query.
+
+        Defaults to top_k=10 instead of upstream's 5 — more useful in practice.
+        """
         if not self._vectors:
             return []
         matrix = np.stack(self._vectors)  # (n, dim)
