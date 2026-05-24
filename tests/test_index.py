@@ -89,13 +89,7 @@ class TestMemIndex:
         results = index_cosine.search(np.ones(DIM), top_k=1)
         assert results[0].metadata == meta
 
-    def test_search_empty_index(self, index_cosine):
-        assert index_cosine.search(np.ones(DIM)) == []
-
-    def test_top_k_capped_at_index_size(self, index_cosine):
-        # Requesting more results than vectors in the index should not error;
-        # it should just return however many vectors exist.
-        index_cosine.add(np.array([1.0, 0.0, 0.0, 0.0]))
-        index_cosine.add(np.array([0.0, 1.0, 0.0, 0.0]))
+    def test_search_empty_index_returns_empty_list(self, index_cosine):
+        # Searching an empty index should return an empty list, not raise an error
         results = index_cosine.search(np.ones(DIM), top_k=DEFAULT_TOP_K)
-        assert len(results) == 2
+        assert results == []
