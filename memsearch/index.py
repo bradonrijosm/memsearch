@@ -70,6 +70,9 @@ class MemIndex:
     def __len__(self) -> int:
         return len(self._vectors)
 
+    def __repr__(self) -> str:
+        return f"MemIndex(dim={self.dim}, metric={self.metric!r}, size={len(self)})"
+
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
@@ -82,5 +85,6 @@ class MemIndex:
 
     @staticmethod
     def _l2_scores(matrix: np.ndarray, query: np.ndarray) -> np.ndarray:
+        """Compute Euclidean (L2) distances from each row of matrix to query."""
         diff = matrix - query
-        return np.sqrt((diff ** 2).sum(axis=1))
+        return np.sqrt((diff * diff).sum(axis=1))
