@@ -89,7 +89,7 @@ class TestMemIndex:
         results = index_cosine.search(np.ones(DIM), top_k=1)
         assert results[0].metadata == meta
 
-    def test_search_empty_index_returns_empty_list(self, index_cosine):
+    def test_search_empty_index_returns_no_results(self, index_cosine):
         # Searching an empty index should return an empty list, not raise an error
         results = index_cosine.search(np.ones(DIM), top_k=DEFAULT_TOP_K)
         assert results == []
