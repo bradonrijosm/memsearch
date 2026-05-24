@@ -16,9 +16,15 @@ class SearchResult:
 
 
 class MemIndex:
-    """Flat in-memory vector index using cosine or L2 distance."""
+    """Flat in-memory vector index using cosine or L2 distance.
 
-    METRICS = ("cosine", "l2")
+    Supported metrics:
+        - ``cosine``: cosine similarity (higher is more similar)
+        - ``l2``: Euclidean distance (lower is more similar, negated internally)
+        - ``dot``: raw dot product similarity (higher is more similar)
+    """
+
+    METRICS = ("cosine", "l2", "dot")
 
     def __init__(self, dim: int, metric: str = "cosine") -> None:
         if metric not in self.METRICS:
@@ -45,6 +51,9 @@ class MemIndex:
         q = query.astype(np.float32)
         if self.metric == "cosine":
             scores = self._cosine_scores(matrix, q)
+        elif self.metric == "dot":
+            # Simple dot product — useful when vectors are already normalized
+            scores = matrix.dot(q)
         else:
             scores = -self._l2_scores(matrix, q)  # negate so higher = better
         top_indices = np.argsort(scores)[::-1][:top_k]
